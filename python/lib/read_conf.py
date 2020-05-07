@@ -263,7 +263,8 @@ class Config(object):
         Return: feature name list
         """
         feature_conf_dic = self.read_feature_conf()
-        feature_list = self.read_schema().values()
+        feature_list = list(self.read_schema().values())
+        #print(type(feature_list))
         feature_list.remove('clk')
         if feature_type == 'all':
             return feature_list

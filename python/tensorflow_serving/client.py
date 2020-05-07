@@ -16,7 +16,7 @@ import threading
 
 import numpy as np
 import tensorflow as tf
-
+import grpc
 from grpc.beta import implementations
 from tensorflow_serving.apis import predict_pb2
 from tensorflow_serving.apis import prediction_service_pb2
@@ -27,12 +27,10 @@ from lib.utils.util import column_to_dtype
 from lib.read_conf import Config
 
 
-tf.app.flags.DEFINE_integer('concurrency', 1,
-                            'maximum number of concurrent inference requests')
+tf.app.flags.DEFINE_integer('concurrency', 1,'maximum number of concurrent inference requests')
 tf.app.flags.DEFINE_integer('num_tests', 100, 'Number of test images')
 tf.app.flags.DEFINE_string('server', 'localhost:9000', 'PredictionService host:port')
-tf.app.flags.DEFINE_string('model', 'wide_deep',
-                           'Model name.')
+tf.app.flags.DEFINE_string('model', 'wide_deep','Model name.')
 tf.app.flags.DEFINE_string('work_dir', '/tmp', 'Working directory. ')
 FLAGS = tf.app.flags.FLAGS
 
@@ -215,8 +213,7 @@ def main(_):
     example = tf.train.Example(features=tf.train.Features(feature=feature_dict))
     serialized = example.SerializeToString()
 
-    request.inputs['inputs'].CopyFrom(
-        tf.contrib.util.make_tensor_proto(serialized, shape=[1]))
+    request.inputs['inputs'].CopyFrom(tf.contrib.util.make_tensor_proto(serialized, shape=[1]))
 
     result_future = stub.Predict.future(request, 5.0)
     prediction = result_future.result().outputs['scores']
